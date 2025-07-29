@@ -103,8 +103,12 @@ class KawaiiStatusRenderer:
         draw.text((251, 927), ram_text, font=self.spicy_fnt, fill=self.ram_color)
 
         draw.text((251, 1046), "SWAP", font=self.adlam_fnt, fill=self.swap_color)
-        if swap_info and swap_info.total > 0:
-            swap_text = f"{swap_info.used:.1f} / {swap_info.total:.1f} GB"
+        if swap_info:
+            if swap_info.total > 0:
+                swap_text = f"{swap_info.used:.1f} / {swap_info.total:.1f} GB"
+            else:
+                # 在docker环境或无swap的情况下显示适当的文本
+                swap_text = "0.0 / 0.0 GB (N/A)"
             draw.text((251, 1081), swap_text, font=self.spicy_fnt, fill=self.swap_color)
 
         draw.text(
@@ -312,9 +316,13 @@ class KawaiiStatusRenderer:
         )
 
         # SWAP百分比 (环形图中心: 103+114/2=160, 1032+109/2=1086.5)
-        if swap_info and swap_info.total > 0:
-            swap_percent = (swap_info.used / swap_info.total) * 100
-            swap_percent_text = f"{swap_percent:.0f}%"
+        if swap_info:
+            if swap_info.total > 0:
+                swap_percent = (swap_info.used / swap_info.total) * 100
+                swap_percent_text = f"{swap_percent:.0f}%"
+            else:
+                # 在docker环境或无swap的情况下显示N/A
+                swap_percent_text = "N/A"
             draw.text(
                 (135, 1069),
                 swap_percent_text,

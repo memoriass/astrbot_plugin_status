@@ -1,5 +1,7 @@
 """系统信息收集模块"""
 
+import logging
+import os
 import platform
 import time
 from dataclasses import dataclass
@@ -7,6 +9,8 @@ from typing import Dict, Optional
 
 import cpuinfo
 import psutil
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -90,6 +94,32 @@ def bytes_to_gb(bytes_value: int) -> float:
     return round(bytes_value / (1024**3), 2)
 
 
+def is_docker_environment() -> bool:
+    """检测是否在Docker环境中运行"""
+    try:
+        # 检查/.dockerenv文件
+        if os.path.exists("/.dockerenv"):
+            return True
+
+        # 检查/proc/1/cgroup文件
+        if os.path.exists("/proc/1/cgroup"):
+            with open("/proc/1/cgroup", "r") as f:
+                content = f.read()
+                if "docker" in content or "containerd" in content:
+                    return True
+
+        # 检查/proc/self/mountinfo文件
+        if os.path.exists("/proc/self/mountinfo"):
+            with open("/proc/self/mountinfo", "r") as f:
+                content = f.read()
+                if "docker" in content:
+                    return True
+
+        return False
+    except (OSError, IOError, PermissionError):
+        return False
+
+
 def get_cpu_info() -> CPUInfo:
     """获取CPU信息"""
     # CPU使用率
@@ -142,11 +172,31 @@ def get_memory_info() -> MemoryInfo:
 
 def get_swap_info() -> SwapInfo:
     """获取交换分区信息"""
-    swap = psutil.swap_memory()
+    is_docker = is_docker_environment()
 
-    return SwapInfo(
-        total=bytes_to_gb(swap.total), used=bytes_to_gb(swap.used), usage=swap.percent
-    )
+    try:
+        swap = psutil.swap_memory()
+
+        # 检查是否在docker环境或swap不可用的情况下
+        if swap.total == 0:
+            if is_docker:
+                logger.info("检测到Docker环境，swap不可用，返回0值数据")
+            else:
+                logger.info("系统未配置swap分区，返回0值数据")
+            return SwapInfo(total=0.0, used=0.0, usage=0.0)
+
+        return SwapInfo(
+            total=bytes_to_gb(swap.total),
+            used=bytes_to_gb(swap.used),
+            usage=swap.percent,
+        )
+    except (OSError, AttributeError, PermissionError) as e:
+        # 在docker环境或权限不足时，psutil可能抛出异常
+        if is_docker:
+            logger.warning(f"Docker环境下获取swap信息失败: {e}，返回0值数据")
+        else:
+            logger.warning(f"获取swap信息失败: {e}，返回0值数据")
+        return SwapInfo(total=0.0, used=0.0, usage=0.0)
 
 
 def get_disk_info() -> DiskInfo:

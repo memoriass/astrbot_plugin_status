@@ -1,5 +1,5 @@
 name: "Status"
 author: "memoriass"
 description: "AstrBot 服务器状态查看插件，显示系统运行状态和资源使用情况"
-version: "1.0.1"
+version: "1.0.2"
 repo: "https://github.com/example/astrbot_plugin_status"

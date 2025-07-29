@@ -59,7 +59,7 @@ class KawaiiStatusRenderer:
             self.spicy_fnt = ImageFont.truetype(str(self.spicy_font_path), 38)
             self.baotu_fnt = ImageFont.truetype(str(self.baotu_font_path), 64)
             self.dingtalk_fnt = ImageFont.truetype(str(self.dingtalk_font_path), 38)
-            self.baotu_small_fnt = ImageFont.truetype(str(self.baotu_font_path), 28)
+            self.baotu_small_fnt = ImageFont.truetype(str(self.baotu_font_path), 42)
         except (OSError, IOError):
             self.adlam_fnt = ImageFont.load_default()
             self.spicy_fnt = ImageFont.load_default()
@@ -422,7 +422,7 @@ class KawaiiStatusRenderer:
         # 运行时间标签
         uptime_label = "运行时间"
         draw.text(
-            (400, 1680),
+            (510, 1695),
             uptime_label,
             font=self.baotu_small_fnt,
             fill=self.details_color,

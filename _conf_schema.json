@@ -1,0 +1,20 @@
+{
+  "only_superuser": {
+    "description": "是否只允许超级用户使用状态命令",
+    "type": "bool",
+    "hint": "启用后只有管理员可以查看系统状态",
+    "default": false
+  },
+  "cache_enabled": {
+    "description": "是否启用图片缓存",
+    "type": "bool",
+    "hint": "启用缓存可以提高响应速度",
+    "default": true
+  },
+  "cache_expire_minutes": {
+    "description": "缓存过期时间（分钟）",
+    "type": "int",
+    "hint": "缓存图片的有效时间，超时后重新生成",
+    "default": 5
+  }
+}

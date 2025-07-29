@@ -1,0 +1,10 @@
+{
+  "astrbot_plugin_status": {
+    "only_superuser": false,
+    "cache_enabled": true,
+    "cache_expire_minutes": 5,
+    "theme": "light",
+    "show_network": true,
+    "show_process_count": true
+  }
+}

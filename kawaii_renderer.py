@@ -370,7 +370,7 @@ class KawaiiStatusRenderer:
                 upload_percentage = 0
             upload_percent_text = f"{upload_percentage:.0f}%"
             draw.text(
-                (587, 1223),
+                (592, 1223),
                 upload_percent_text,
                 font=self.spicy_fnt,
                 fill=self.network_upload_color,
